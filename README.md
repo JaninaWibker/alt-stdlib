@@ -8,7 +8,7 @@ This project is heavily inspired by [stb](https://github.com/nothings/stb), [ser
 
 There is a `common.hpp` file with some commonly used things but other than that everything is self-contained and can just be included as is.
 
-## compononent
+## components
 
 ### (unbounded) array
 
