@@ -21,6 +21,8 @@ int hashtable_test() {
 
   ht.del(2);
 
+  ht.fnd(21);
+
   ht.each([](int x) { printf("%d\n", x); });
 
   return 0;

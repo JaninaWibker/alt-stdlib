@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include "common.hpp"
 
-#define HT_DEBUG
+// #define HT_DEBUG
 
 // the slot is part of the free list
 #define SLOT_STATUS_FREE 0x01
@@ -97,7 +97,9 @@ template<class T, class H> T hashtable<T, H>::ins(T value) {
 
   int hash = m_hash(value) % m_cap;
 
+#ifdef HT_DEBUG
   printf("hash: %d, value: %d (ins)\n", hash, value);
+#endif
 
   ht_slot<T> s = m_data[hash];
 
@@ -197,7 +199,6 @@ template<class T, class H> T hashtable<T, H>::ins(T value) {
 
 template<class T, class H> bool hashtable<T, H>::del(T value) {
 
-  // TODO: DEL IS FOR NOW ONLY BASED ON THE HASH; NOT THE VALUE
   int hash = m_hash(value) % m_cap;
 
   if((m_data[hash].status & SLOT_STATUS_HEAD) == 0) { return false; }
@@ -267,43 +268,107 @@ template<class T, class H> bool hashtable<T, H>::del(T value) {
 
   m_cnt--;
 
+#ifdef HT_DEBUG
   dbg();
+#endif
 
   resize(m_cnt);
 
   return true;
 }
 
+// TODO: maybe an optional interface?
 template<class T, class H> T hashtable<T, H>::fnd(T value) {
-  return value;
+  return has(value) ? value : NULL;
 }
 
+// TODO: maybe an optional interface?
 template<class T, class H> template<class F> T hashtable<T, H>::fnd(F&& pred) {
+
+  for(size_t i = 0; i < m_cap; i++) {
+    if((m_data[i].status & SLOT_STATUS_FREE) != 0) { continue; }
+
+    if(pred(m_data[i].value)) {
+      return m_data[i].value;
+    }
+  }
+
   return NULL;
 }
 
 template<class T, class H> bool hashtable<T, H>::has(T value) {
-  return false;
+
+  int hash = m_hash(value) % m_cap;
+
+  if((m_data[hash].status & SLOT_STATUS_HEAD) == 0) { return false; }
+
+  size_t s = hash;
+  bool found = false;
+
+  while(s != -1) {
+    if(m_data[s].value == value) {
+      found = true;
+      break;
+    }
+    s = m_data[s].next;
+  }
+
+  if(!found) { return false; }
+
+  return true;
 }
 
 template<class T, class H> template<class F> bool hashtable<T, H>::has(F&& pred) {
+
+  for(size_t i = 0; i < m_cap; i++) {
+    if((m_data[i].status & SLOT_STATUS_FREE) != 0) { continue; }
+
+    if(pred(m_data[i].value)) {
+      return true;
+    }
+  }
+
   return false;
 }
 
 template<class T, class H> template<class F> void hashtable<T, H>::each(F&& fn) {
 
+  for(size_t i = 0; i < m_cap; i++) {
+    if((m_data[i].status & SLOT_STATUS_FREE) != 0) { continue; }
+
+    fn(m_data[i].value);
+  }
+
 }
 
 template<class T, class H> void hashtable<T, H>::clr() {
+
+  for(size_t i = 0; i < m_cap; i++) {
+    m_data[i].next = (i + 1) % m_cap;
+    m_data[i].prev = (i + m_cap - 1) % m_cap;
+    m_data[i].status = SLOT_STATUS_FREE;
+    m_data[i].value = 0;
+  }
 
 }
 
 template<class T, class H> template<class F> void hashtable<T, H>::filter(F&& pred) {
 
+  for(size_t i = 0; i < m_cap; i++) {
+    if((m_data[i].status & SLOT_STATUS_FREE) != 0) { continue; }
+
+    if(pred(m_data[i].value)) { del(m_data[i].value); }
+  }
+
 }
 
 template<class T, class H> void hashtable<T, H>::cat(hashtable<T, H> other) {
 
-}
+  for(size_t i = 0; i < other.m_cap; i++) {
+    if((other.m_data[i].status & SLOT_STATUS_FREE) != 0) { continue; }
 
+    ins(other.m_data[i]);
+  }
+
+}
 
