@@ -88,8 +88,25 @@ template<class K, class V, class H> void hashmapfree(hashmap<K, V, H>* hm) {
  * It might be useful to call this if you already know that you'll add a specific amount of items soon.
  */
 template<class K, class V, class H> void hashmap<K, V, H>::resize(size_t new_size) {
-  // TODO: implement
-  printf("not implemented yet (resize)\n");
+
+  size_t new_cap = -1;
+
+  // grow if >= 50% filled (double size)
+  if(2 * new_size >= m_cap     ) { new_cap = m_cap * 2; }
+  // shrink if <= 12.5% filled (half size)
+  else if(new_size <= m_cap / 8) { new_cap = m_cap / 2; }
+
+  if(new_cap != -1) {
+    auto hm = hashmapinit<K, V, H>(new_size, m_hash);
+
+    each([&hm](K key, V value) { hm.ins(key, value); });
+
+    free(m_data);
+    m_cap = hm.m_cap;
+    m_cnt = hm.m_cnt;
+    m_freelist = hm.m_freelist;
+    m_data = hm.m_data;
+  }
 }
 
 /**
