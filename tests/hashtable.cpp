@@ -25,5 +25,7 @@ int hashtable_test() {
 
   ht.each([](int x) { printf("%d\n", x); });
 
+  hashtablefree(&ht);
+
   return 0;
 }

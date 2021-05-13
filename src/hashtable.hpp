@@ -43,6 +43,14 @@ template<class T, class H> struct hashtable {
   void dbg(char* name);
 };
 
+/**
+ * Create a new hashtable using an initial capacity and a given hash function
+ * Use as follows ([x] marks things to replace):
+ * ```c
+ * auto hash = []([your type] x) -> int { [your hash implementation] };
+ * auto ht = hashtableinit<[your type], decltype(hash)>([initial capacity], hash);
+ * ```
+ */
 template<class T, class H> hashtable<T, H> hashtableinit(size_t capacity, H hash) {
 
   // minimum capacity is 8 // TODO: should i change this to 16?
@@ -69,15 +77,39 @@ template<class T, class H> hashtable<T, H> hashtableinit(size_t capacity, H hash
   return ht;
 }
 
+/**
+ * Free hashtable
+ */
+template<class T, class H> void hashtablefree(hashtable<T, H>* ht) {
+  ht->m_cnt = 0;
+  ht->m_cap = 0;
+  ht->m_freelist = 0;
+  free(ht->m_data);
+}
+
+/**
+ * Resize the hashtable
+ *
+ * This can be called manually but will also be called internally whenever needed.
+ * It might be useful to call this if you already know that you'll add a specific amount of items soon.
+ */
 template<class T, class H> void hashtable<T, H>::resize(size_t new_size) {
-  // TODO: need to handle the case that the list is full
+  // TODO: implement
   printf("not implemented yet (resize)\n");
 }
 
+/**
+ * Print debug information about the state of the hashtable
+ */
 template<class T, class H> void hashtable<T, H>::dbg() {
   dbg(NULL);
 }
 
+/**
+ * Print debug information about the state of the hashtable
+ *
+ * Includes a name which will be displayed alongside the debug information to tell debug logs apart.
+ */
 template<class T, class H> void hashtable<T, H>::dbg(char* name) {
   if(name != NULL) { printf("dbg (%s):\n ", name); }
   else             { printf("dbg:\n");             }
@@ -93,6 +125,12 @@ template<class T, class H> void hashtable<T, H>::dbg(char* name) {
   printf("]\n");
 }
 
+/**
+ * Insert something into the hashtable
+ *
+ * If the element already exists it will be overwritten.
+ * Handles hash collisions.
+ */
 template<class T, class H> T hashtable<T, H>::ins(T value) {
 
   int hash = m_hash(value) % m_cap;
@@ -197,6 +235,12 @@ template<class T, class H> T hashtable<T, H>::ins(T value) {
   return value;
 }
 
+/**
+ * Delete something from the hashtable
+ *
+ * Returns wether or not the action was successful.
+ * Handles hash collisions.
+ */
 template<class T, class H> bool hashtable<T, H>::del(T value) {
 
   int hash = m_hash(value) % m_cap;
@@ -278,11 +322,19 @@ template<class T, class H> bool hashtable<T, H>::del(T value) {
 }
 
 // TODO: maybe an optional interface?
+/**
+ * Search for a value in the hashtable
+ */
 template<class T, class H> T hashtable<T, H>::fnd(T value) {
   return has(value) ? value : NULL;
 }
 
 // TODO: maybe an optional interface?
+/**
+ * Search for a value in the hashtable by predicate
+ *
+ * Warning: Expensive action
+ */
 template<class T, class H> template<class F> T hashtable<T, H>::fnd(F&& pred) {
 
   for(size_t i = 0; i < m_cap; i++) {
@@ -296,6 +348,9 @@ template<class T, class H> template<class F> T hashtable<T, H>::fnd(F&& pred) {
   return NULL;
 }
 
+/**
+ * Check if the hashtable contains a value
+ */
 template<class T, class H> bool hashtable<T, H>::has(T value) {
 
   int hash = m_hash(value) % m_cap;
@@ -318,6 +373,11 @@ template<class T, class H> bool hashtable<T, H>::has(T value) {
   return true;
 }
 
+/**
+ * Check if the hashtable contains a value by predicate lambda
+ *
+ * Warning: Expensive action
+ */
 template<class T, class H> template<class F> bool hashtable<T, H>::has(F&& pred) {
 
   for(size_t i = 0; i < m_cap; i++) {
@@ -331,6 +391,11 @@ template<class T, class H> template<class F> bool hashtable<T, H>::has(F&& pred)
   return false;
 }
 
+/**
+ * Iterate through all elements of the hashtable and call fn for every one of them
+ *
+ * Warning: Expensive action
+ */
 template<class T, class H> template<class F> void hashtable<T, H>::each(F&& fn) {
 
   for(size_t i = 0; i < m_cap; i++) {
@@ -341,6 +406,11 @@ template<class T, class H> template<class F> void hashtable<T, H>::each(F&& fn) 
 
 }
 
+/**
+ * Clear out all elements of the hashtable
+ *
+ * Warning: Expensive action
+ */
 template<class T, class H> void hashtable<T, H>::clr() {
 
   for(size_t i = 0; i < m_cap; i++) {
@@ -352,6 +422,13 @@ template<class T, class H> void hashtable<T, H>::clr() {
 
 }
 
+/**
+ * Filter hashtable elements
+ *
+ * Takes a predicate lambda which decides which elements can stay and which get removed.
+ *
+ * Warning: Expensive action
+ */
 template<class T, class H> template<class F> void hashtable<T, H>::filter(F&& pred) {
 
   for(size_t i = 0; i < m_cap; i++) {
@@ -362,6 +439,13 @@ template<class T, class H> template<class F> void hashtable<T, H>::filter(F&& pr
 
 }
 
+/**
+ * Combine another hashtable with the current one
+ *
+ * This goes through all elements of the other hashtable and adds the elements to the current one.
+ *
+ * Warning: Expensive operation.
+ */
 template<class T, class H> void hashtable<T, H>::cat(hashtable<T, H> other) {
 
   for(size_t i = 0; i < other.m_cap; i++) {
