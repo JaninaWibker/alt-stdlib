@@ -174,7 +174,7 @@ template<class T, class H> T hashtable<T, H>::ins(T value) {
     m_data[hash].next = -1;
     m_data[hash].prev = -1;
     m_data[hash].status = SLOT_STATUS_HEAD;
-    m_data[hash].value= value;
+    m_data[hash].value = value;
 
     m_cnt++;
 

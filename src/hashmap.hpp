@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include "common.hpp"
 
-// #define HM_DEBUG
+#define HM_DEBUG
 
 // the slot is part of the free list
 #define SLOT_STATUS_FREE 0x01
@@ -60,7 +60,7 @@ template<class K, class V, class H> hashmap<K, V, H> hashmapinit(size_t capacity
     data[i].value = 0;
   }
 
-  hashmap<K, V, H> ht = {
+  hashmap<K, V, H> hm = {
     .m_cap = actual_capacity,
     .m_cnt = 0,
     .m_freelist = 0,
@@ -68,7 +68,7 @@ template<class K, class V, class H> hashmap<K, V, H> hashmapinit(size_t capacity
     .m_hash = hash
   };
 
-  return ht;
+  return hm;
 }
 
 /**
@@ -146,7 +146,111 @@ template<class K, class V, class H> void hashmap<K, V, H>::dbg(char* name) {
  * Handles hash collisions.
  */
 template<class K, class V, class H> V hashmap<K, V, H>::ins(K key, V value) {
-  // TODO: implement
+
+  int hash = m_hash(key) % m_cap;
+
+#ifdef HT_DEBUG
+  printf("hash: %d, key: %d (ins)\n", hash, value);
+#endif
+
+  hm_slot<K, V> s = m_data[hash];
+
+  resize(m_cnt + 1);
+
+  // TODO: implement further
+
+  if((s.status & SLOT_STATUS_FREE) != 0) {
+
+    // adjust the head of the freelist if necessary
+    if(m_freelist == hash) { m_freelist = m_data[m_freelist].next; }
+
+    // adjust free list
+    m_data[s.next].prev = s.prev;
+    m_data[s.prev].next = s.next;
+
+    // update slot
+    m_data[hash].next = -1;
+    m_data[hash].prev = -1;
+    m_data[hash].status = SLOT_STATUS_HEAD;
+    m_data[hash].key = key;
+    m_data[hash].value = value;
+
+    m_cnt++;
+
+#ifdef HM_DEBUG
+    dbg();
+#endif
+
+  } else {
+
+    // found head of linked list
+    if((m_data[hash].status & SLOT_STATUS_HEAD) != 0) {
+      // get free slot using freelist
+      size_t target = m_freelist;
+      size_t old_freelist_prev = m_data[m_freelist].prev;
+      m_freelist = m_data[m_freelist].next;
+      m_data[m_freelist].prev = old_freelist_prev;
+      m_data[old_freelist_prev].next = m_freelist;
+
+      // populate slot
+      m_data[target].next = -1;
+      m_data[target].prev = hash;
+      m_data[target].status = 0;
+      m_data[target].key = key;
+      m_data[target].value = value;
+
+      // update m_data[hash] and it's linked list members if necessary
+      if(m_data[hash].next != -1) {
+        m_data[m_data[hash].next].prev = target;
+        m_data[target].next = m_data[hash].next;
+      }
+      m_data[hash].next = target;
+
+      m_cnt++;
+
+#ifdef HM_DEBUG
+      dbg();
+#endif
+
+    // found element with incorrect hash
+    } else {
+      // move contents of m_data[hash] to another free slot
+      size_t target = m_freelist;
+      m_freelist = m_data[m_freelist].next;
+
+      // update freelist prev and next here
+      m_data[m_data[target].next].prev = m_data[target].prev;
+      m_data[m_data[target].prev].next = m_data[target].next;
+
+      m_data[target].next = m_data[hash].next;
+      m_data[target].prev = m_data[hash].prev;
+      m_data[target].status = 0;
+      m_data[target].key = m_data[hash].key;
+      m_data[target].value = m_data[hash].value;
+
+      if(m_data[target].next != -1) {
+        m_data[m_data[target].next].prev = target;
+      }
+      m_data[m_data[target].prev].next = target;
+
+
+      // use m_data[hash] for new key & value
+      m_data[hash].next = -1;
+      m_data[hash].prev = -1;
+      m_data[hash].status = SLOT_STATUS_HEAD;
+      m_data[hash].key = key;
+      m_data[hash].value = value;
+
+      m_cnt++;
+
+#ifdef HT_DEBUG
+      dbg();
+#endif
+
+    }
+  }
+
+  return value;
 }
 
 /**
@@ -156,7 +260,87 @@ template<class K, class V, class H> V hashmap<K, V, H>::ins(K key, V value) {
  * Handles hash collisions.
  */
 template<class K, class V, class H> V hashmap<K, V, H>::del(K key) {
-  // TODO: implement
+
+  int hash = m_hash(key) % m_cap;
+
+  if((m_data[hash].status & SLOT_STATUS_HEAD) == 0) { return NULL; }
+
+  size_t s = hash;
+  bool found = false;
+
+  while(s != -1) {
+    if(m_data[s].key == key) {
+      found = true;
+      break;
+    }
+    s = m_data[s].next;
+  }
+
+  if(!found) { return NULL; }
+
+  size_t freelist_target = -1;
+
+  V rtn_value = m_data[s].value;
+
+  // not end of linked list
+  if(m_data[s].next != -1) {
+
+    size_t next = m_data[s].next;
+
+    // is head of linked list -> swap value the with following slot
+    if((m_data[s].status & SLOT_STATUS_HEAD) != 0) {
+      m_data[s].key = m_data[next].key;
+      m_data[s].value = m_data[next].value;
+    } else {
+      next = s;
+      s = m_data[s].prev;
+    }
+
+    // the list looks like this: <a>, s, next, <b> and needs to
+    // look like this: <a>, s, <b> so next needs to be cut out
+
+    if(m_data[next].next != -1) {
+      m_data[m_data[next].next].prev = s;
+    }
+    m_data[s].next = m_data[m_data[s].next].next;
+
+    // add m_data[next] to the freelist
+    freelist_target = next;
+
+  // end of linked list
+  } else {
+    // decouple m_data[s] from linked list and add it to the freelist
+    if(m_data[s].prev != -1) {
+      m_data[m_data[s].prev].next = -1;
+      m_data[s].prev = -1;
+      m_data[s].next = -1;
+    }
+    freelist_target = s;
+  }
+
+  // update freelist using freelist_target
+
+  m_data[freelist_target].status = SLOT_STATUS_FREE;
+  m_data[freelist_target].key = 0;
+  m_data[freelist_target].value = 0;
+
+  // set as first freelist element
+  m_data[freelist_target].next = m_freelist;
+  m_data[freelist_target].prev = m_data[m_freelist].prev;
+  m_data[m_data[m_freelist].prev].next = freelist_target;
+  m_data[m_freelist].prev = freelist_target;
+
+  m_freelist = freelist_target;
+
+  m_cnt--;
+
+#ifdef HT_DEBUG
+  dbg();
+#endif
+
+  resize(m_cnt);
+
+  return rtn_value;
 }
 
 /**
@@ -225,7 +409,7 @@ template<class K, class V, class H> bool hashmap<K, V, H>::has(K key) {
 
 
 /**
- * Check if the hashtable contains a value by predicate lambda (called with both key and value)
+ * Check if the hashmap contains a value by predicate lambda (called with both key and value)
  *
  * Warning: Expensive action
  */
