@@ -385,9 +385,7 @@ template<class T, class H> bool hashtable<T, H>::has(T value) {
     s = m_data[s].next;
   }
 
-  if(!found) { return false; }
-
-  return true;
+  return found;
 }
 
 /**
@@ -451,7 +449,7 @@ template<class T, class H> template<class F> void hashtable<T, H>::filter(F&& pr
   for(size_t i = 0; i < m_cap; i++) {
     if((m_data[i].status & SLOT_STATUS_FREE) != 0) { continue; }
 
-    if(pred(m_data[i].value)) { del(m_data[i].value); }
+    if(!pred(m_data[i].value)) { del(m_data[i].value); }
   }
 
 }
@@ -468,7 +466,7 @@ template<class T, class H> void hashtable<T, H>::cat(hashtable<T, H> other) {
   for(size_t i = 0; i < other.m_cap; i++) {
     if((other.m_data[i].status & SLOT_STATUS_FREE) != 0) { continue; }
 
-    ins(other.m_data[i]);
+    ins(other.m_data[i].value);
   }
 
 }

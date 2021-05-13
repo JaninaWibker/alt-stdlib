@@ -146,7 +146,7 @@ template<class K, class V, class H> void hashmap<K, V, H>::dbg(char* name) {
  * Handles hash collisions.
  */
 template<class K, class V, class H> V hashmap<K, V, H>::ins(K key, V value) {
-
+  // TODO: implement
 }
 
 /**
@@ -156,13 +156,29 @@ template<class K, class V, class H> V hashmap<K, V, H>::ins(K key, V value) {
  * Handles hash collisions.
  */
 template<class K, class V, class H> V hashmap<K, V, H>::del(K key) {
-
+  // TODO: implement
 }
 
 /**
  * Search for a value in the hashmap (by key)
  */
 template<class K, class V, class H> V hashmap<K, V, H>::fnd(K key) {
+
+  int hash = m_hash(key) % m_cap;
+
+  if((m_data[hash].status & SLOT_STATUS_HEAD) == 0) { return false; }
+
+  size_t s = hash;
+  bool found = false;
+
+  while(s != -1) {
+    if(m_data[s].key == key) {
+      return m_data[s].value;
+    }
+    s = m_data[s].next;
+  }
+
+  return NULL;
 
 }
 
@@ -173,6 +189,16 @@ template<class K, class V, class H> V hashmap<K, V, H>::fnd(K key) {
  */
 template<class K, class V, class H> template<class F> V hashmap<K, V, H>::fnd(F&& pred) {
 
+  for(size_t i = 0; i < m_cap; i++) {
+    if((m_data[i].status & SLOT_STATUS_FREE) != 0) { continue; }
+
+    if(pred(m_data[i].key, m_data[i].value)) {
+      return m_data[i].value;
+    }
+  }
+
+  return NULL;
+
 }
 
 
@@ -181,6 +207,20 @@ template<class K, class V, class H> template<class F> V hashmap<K, V, H>::fnd(F&
  */
 template<class K, class V, class H> bool hashmap<K, V, H>::has(K key) {
 
+  int hash = m_hash(key) % m_cap;
+
+  if((m_data[hash].status & SLOT_STATUS_HEAD) == 0) { return false; }
+
+  size_t s = hash;
+  bool found = false;
+
+  while(s != -1) {
+    if(m_data[s].key == key) { return true; }
+
+    s = m_data[s].next;
+  }
+
+  return false;
 }
 
 
@@ -191,6 +231,13 @@ template<class K, class V, class H> bool hashmap<K, V, H>::has(K key) {
  */
 template<class K, class V, class H> template<class F> bool hashmap<K, V, H>::has(F&& pred) {
 
+  for(size_t i = 0; i < m_cap; i++) {
+    if((m_data[i].status & SLOT_STATUS_FREE) != 0) { continue; }
+
+    if(pred(m_data[i].key, m_data[i].value)) { return true; }
+  }
+
+  return false;
 }
 
 
@@ -200,6 +247,12 @@ template<class K, class V, class H> template<class F> bool hashmap<K, V, H>::has
  * Warning: Expensive action
  */
 template<class K, class V, class H> template<class F> void hashmap<K, V, H>::each(F&& fn) {
+
+  for(size_t i = 0; i < m_cap; i++) {
+    if((m_data[i].status & SLOT_STATUS_FREE) != 0) { continue; }
+
+    fn(m_data[i].key, m_data[i].value);
+  }
 
 }
 
@@ -211,6 +264,13 @@ template<class K, class V, class H> template<class F> void hashmap<K, V, H>::eac
  */
 template<class K, class V, class H> void hashmap<K, V, H>::clr() {
 
+  for(size_t i = 0; i < m_cap; i++) {
+    m_data[i].next = (i + 1) % m_cap;
+    m_data[i].prev = (i + m_cap - 1) % m_cap;
+    m_data[i].status = SLOT_STATUS_FREE;
+    m_data[i].key = 0;
+    m_data[i].value = 0;
+  }
 }
 
 
@@ -223,6 +283,11 @@ template<class K, class V, class H> void hashmap<K, V, H>::clr() {
  */
 template<class K, class V, class H> template<class F> void hashmap<K, V, H>::filter(F&& pred) {
 
+  for(size_t i = 0; i < m_cap; i++) {
+    if((m_data[i].status % SLOT_STATUS_FREE) != 0) { continue; }
+
+    if(!pred(m_data[i].key, m_data[i].value)) { del(m_data[i].key); }
+  }
 }
 
 
@@ -235,4 +300,9 @@ template<class K, class V, class H> template<class F> void hashmap<K, V, H>::fil
  */
 template<class K, class V, class H> void hashmap<K, V, H>::cat(hashmap<K, V, H> other) {
 
+  for(size_t i = 0; i < other.m_cap; i++) {
+    if((other.m_data[i].status % SLOT_STATUS_FREE) != 0) { continue; }
+
+    ins(other.m_data[i].key, other.m_data[i].value);
+  }
 }
