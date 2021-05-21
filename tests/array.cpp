@@ -26,6 +26,8 @@ int array_test() {
 
   arr.cat(arr2);
 
+  // TODO: write tests that integrate with each and test more functions other than just .put and .del
+
   printf("concat\n");
 
   arr.each([](int x, int i) { printf("data[%d] = %d\n", i, x); });

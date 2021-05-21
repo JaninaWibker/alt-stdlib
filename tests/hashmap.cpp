@@ -28,6 +28,8 @@ int hashmap_test() {
 
   hm.each([](char* key, int value) { printf("%s: %d\n", key, value); });
 
+  // TODO: write tests which test other functions
+
   hashmapfree(&hm);
 
   DONE();

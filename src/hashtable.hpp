@@ -459,7 +459,7 @@ template<class T, class H> template<class F> void hashtable<T, H>::filter(F&& pr
  *
  * This goes through all elements of the other hashtable and adds the elements to the current one.
  *
- * Warning: Expensive operation.
+ * Warning: Expensive action
  */
 template<class T, class H> void hashtable<T, H>::cat(hashtable<T, H> other) {
 

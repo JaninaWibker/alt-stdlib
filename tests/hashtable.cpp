@@ -28,6 +28,8 @@ int hashtable_test() {
 
   ht.each([](int x) { printf("%d\n", x); });
 
+  // TODO: write tests which test other functions
+
   hashtablefree(&ht);
 
   DONE();
