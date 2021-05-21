@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include "common.hpp"
 
-#define HM_DEBUG
+// #define HM_DEBUG
 
 // the slot is part of the free list
 #define SLOT_STATUS_FREE 0x01
@@ -490,3 +490,4 @@ template<class K, class V, class H> void hashmap<K, V, H>::cat(hashmap<K, V, H> 
     ins(other.m_data[i].key, other.m_data[i].value);
   }
 }
+
