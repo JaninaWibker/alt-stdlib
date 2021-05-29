@@ -240,3 +240,74 @@ This goes through all elements of the other hashmap and adds the elements to the
 
 `void hashmap<K, V, H>::cat(hashmap<K, V, H> other)`
 
+
+### minheap
+
+A minheap implementation.
+
+
+**minheapinit**: Create a new minheap using an initial capacity.
+
+`template<class T> static minheap<T> minheapinit(size_t capacity)`
+
+
+**minheapfree**: Free minheap
+
+`template<class T> void minheapfree(minheap<T> heap)`
+
+
+**::resize**: Resize the minheap
+
+This can be called manually but will also be called internally whenever needed.
+It might be useful to call this if you already know that you'll add a specific amount of items soon.
+
+`template<class T> void minheap<T>::resize(size_t new_size)`
+
+
+**::dbg**: Print debug information about the state of the minheap
+
+`template<class T> void minheap<T>::dbg()`
+
+
+**::dbg**: Print debug information about the state of the minheap
+
+Includes a name which will be displayed alongside the debug information to tell debug logs apart.
+
+`template<class T> void minheap<T>::dbg(char* name)`
+
+
+**::insert**: Insert something into the minheap
+
+O(log n)
+
+`template<class T> void minheap<T>::insert(T el)`
+
+
+**::sift_up**: Correct minheap invariant from the bottom up
+
+Mostly used internally.
+It is assumed that the minheap invariant holds true everywhere except at m_data[i]
+
+`template<class T> void minheap<T>::sift_up(size_t i)`
+
+
+**::sift_down**: Correct minheap invariant from the top down
+
+Mostly used internally.
+It is assumed that the minheap invariant holds true everywhere except at L_CHILD(i) and R_CHILD(i).
+
+`template<class T> void minheap<T>::sift_down(size_t i)`
+
+
+**::min**: Get the minimum element of the minheap
+
+O(1)
+
+`template<class T> T minheap<T>::min()`
+
+
+**::delete_min**: Delete minimum element of minheap and return it
+
+O(log n)
+
+`template<class T> T minheap<T>::delete_min()`

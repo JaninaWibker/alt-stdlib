@@ -54,7 +54,7 @@ template<class T, class H> struct hashtable {
 template<class T, class H> hashtable<T, H> hashtableinit(size_t capacity, H hash) {
 
   // minimum capacity is 8 // TODO: should i change this to 16?
-  size_t actual_capacity = max(capacity, 8);
+  size_t actual_capacity = MAX(capacity, 8);
   ht_slot<T>* data = (ht_slot<T>*)(malloc(sizeof(ht_slot<T>) * actual_capacity));
   // TODO: handle malloc errors
 
@@ -139,7 +139,7 @@ template<class T, class H> void hashtable<T, H>::dbg(char* name) {
     ht_slot<T> s = m_data[i];
     printf("  (%2d) { .next = %2d, .prev = %2d, .status = %2d, .value = %d }\n", i, s.next, s.prev, s.status, s.value);
   }
-  printf("]\n");
+  printf("  ]\n");
 }
 
 /**

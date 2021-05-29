@@ -39,7 +39,7 @@ template<class T> struct array {
 
 template<class T> static array<T> arrayinit(size_t capacity) {
 
-  size_t actual_capacity = max(capacity, 1);
+  size_t actual_capacity = MAX(capacity, 1);
   T* data = (T*)(malloc(sizeof(T) * actual_capacity));
   // TODO: handle malloc errors
 

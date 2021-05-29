@@ -47,7 +47,7 @@ template<class K, class V, class H> struct hashmap {
 template<class K, class V, class H> hashmap<K, V, H> hashmapinit(size_t capacity, H hash) {
 
   // minimum capacity is 8 // TODO: should i change this to 16?
-  size_t actual_capacity = max(capacity, 8);
+  size_t actual_capacity = MAX(capacity, 8);
   hm_slot<K, V>* data = (hm_slot<K, V>*)(malloc(sizeof(hm_slot<K, V>) * actual_capacity));
   // TODO: handle malloc errors
 
@@ -136,7 +136,7 @@ template<class K, class V, class H> void hashmap<K, V, H>::dbg(char* name) {
         i, s.next, s.prev, s.status, s.key, s.value
     );
   }
-  printf("]\n");
+  printf("  ]\n");
 }
 
 /**
@@ -156,8 +156,6 @@ template<class K, class V, class H> V hashmap<K, V, H>::ins(K key, V value) {
   hm_slot<K, V> s = m_data[hash];
 
   resize(m_cnt + 1);
-
-  // TODO: implement further
 
   if((s.status & SLOT_STATUS_FREE) != 0) {
 
