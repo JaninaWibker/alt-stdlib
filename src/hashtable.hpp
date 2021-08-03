@@ -43,6 +43,12 @@ template<class T, class H> struct hashtable {
   void dbg(char* name);
 };
 
+
+template<class T, class H> static hashtable<T, H> hashtableinit(size_t capacity, H hash);
+template<class T, class H> static void hashtablefree(hashtable<T, H>* ht);
+
+#ifdef HASHTABLE_IMPLEMENTATION
+
 /**
  * Create a new hashtable using an initial capacity and a given hash function
  * Use as follows ([x] marks things to replace):
@@ -51,7 +57,7 @@ template<class T, class H> struct hashtable {
  * auto ht = hashtableinit<[your type], decltype(hash)>([initial capacity], hash);
  * ```
  */
-template<class T, class H> hashtable<T, H> hashtableinit(size_t capacity, H hash) {
+template<class T, class H> static hashtable<T, H> hashtableinit(size_t capacity, H hash) {
 
   // minimum capacity is 8 // TODO: should i change this to 16?
   size_t actual_capacity = MAX(capacity, 8);
@@ -80,7 +86,7 @@ template<class T, class H> hashtable<T, H> hashtableinit(size_t capacity, H hash
 /**
  * Free hashtable
  */
-template<class T, class H> void hashtablefree(hashtable<T, H>* ht) {
+template<class T, class H> static void hashtablefree(hashtable<T, H>* ht) {
   ht->m_cnt = 0;
   ht->m_cap = 0;
   ht->m_freelist = 0;
@@ -471,3 +477,4 @@ template<class T, class H> void hashtable<T, H>::cat(hashtable<T, H> other) {
 
 }
 
+#endif

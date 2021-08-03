@@ -1,4 +1,7 @@
 #include <stdio.h>
+
+#define TEST_IMPLEMENTATION
+
 #include "tests/test.hpp"
 #include "tests/array.cpp"
 #include "tests/hashtable.cpp"

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "test.hpp"
+#define ARRAY_IMPLEMENTATION
 #include "../src/array.hpp"
 
 int array_test() {

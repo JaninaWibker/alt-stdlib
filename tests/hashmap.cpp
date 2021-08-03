@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "test.hpp"
+#define HASHMAP_IMPLEMENTATION
 #include "../src/hashmap.hpp"
 
 int hashmap_test() {

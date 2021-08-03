@@ -44,7 +44,11 @@ template<class K, class V, class H> struct hashmap {
   void dbg(char* name);
 };
 
-template<class K, class V, class H> hashmap<K, V, H> hashmapinit(size_t capacity, H hash) {
+template<class K, class V, class H> static hashmap<K, V, H> hashmapinit(size_t capacity, H hash);
+
+#ifdef HASHMAP_IMPLEMENTATION
+
+template<class K, class V, class H> static hashmap<K, V, H> hashmapinit(size_t capacity, H hash) {
 
   // minimum capacity is 8 // TODO: should i change this to 16?
   size_t actual_capacity = MAX(capacity, 8);
@@ -489,3 +493,4 @@ template<class K, class V, class H> void hashmap<K, V, H>::cat(hashmap<K, V, H> 
   }
 }
 
+#endif

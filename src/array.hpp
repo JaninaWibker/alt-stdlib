@@ -37,6 +37,10 @@ template<class T> struct array {
   template<class F> void filter(F&& pred);
 };
 
+template<class T> static array<T> arrayinit(size_t capacity);
+
+#ifdef ARRAY_IMPLEMENTATION
+
 template<class T> static array<T> arrayinit(size_t capacity) {
 
   size_t actual_capacity = MAX(capacity, 1);
@@ -244,3 +248,5 @@ template<class T> template<class F> void array<T>::filter(F&& pred) {
 
   resize(m_len);
 }
+
+#endif

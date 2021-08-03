@@ -1,19 +1,6 @@
 #include <cstdlib>
 #include "common.hpp"
 
-
-#define PARENT(n) (n/2)
-#define L_CHILD(n) (2*n+1)
-#define R_CHILD(n) (2*n+2)
-#define L_OR_R(n) ((n+1) % 2)
-#define SIBLING(n) (L_OR_R(n) ? ((n)-1) : ((n)+1))
-
-#define SWAP(a, b) { \
-  __typeof__ (a) tmp = a; \
-  a = b; \
-  b = tmp; \
-}
-
 template<class T> struct minheap {
   size_t m_len;
   size_t m_cap;
@@ -29,6 +16,25 @@ template<class T> struct minheap {
   T min();
   T delete_min();
 };
+
+template<class T> static minheap<T> minheapinit(size_t capacity);
+template<class T> static void minheapfree(minheap<T>* heap);
+
+#ifdef MINHEAP_IMPLEMENTATION
+
+#define PARENT(n) (n/2)
+#define L_CHILD(n) (2*n+1)
+#define R_CHILD(n) (2*n+2)
+#define L_OR_R(n) ((n+1) % 2)
+#define SIBLING(n) (L_OR_R(n) ? ((n)-1) : ((n)+1))
+
+#define SWAP(a, b) { \
+  __typeof__ (a) tmp = a; \
+  a = b; \
+  b = tmp; \
+}
+
+
 
 /**
  * Create a new minheap using an initial capacity.
@@ -53,7 +59,7 @@ template<class T> static minheap<T> minheapinit(size_t capacity) {
 /**
  * Free minheap
  */
-template<class T> void minheapfree(minheap<T>* heap) {
+template<class T> static void minheapfree(minheap<T>* heap) {
   heap->m_len = 0;
   heap->m_cap = 0;
   free(heap->m_data);
@@ -190,3 +196,5 @@ template<class T> T minheap<T>::delete_min() {
   resize(m_len-1);
   return result;
 }
+
+#endif

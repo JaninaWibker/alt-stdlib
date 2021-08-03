@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "test.hpp"
+#define MINHEAP_IMPLEMENTATION
 #include "../src/minheap.hpp"
 
 int minheap_test() {

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "test.hpp"
+#define HASHTABLE_IMPLEMENTATION
 #include "../src/hashtable.hpp"
 
 int hashtable_test() {
