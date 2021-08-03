@@ -1,3 +1,6 @@
+#ifndef HASHMAP_H_
+#define HASHMAP_H_
+
 #include <cstdlib>
 #include "common.hpp"
 
@@ -45,6 +48,8 @@ template<class K, class V, class H> struct hashmap {
 };
 
 template<class K, class V, class H> static hashmap<K, V, H> hashmapinit(size_t capacity, H hash);
+
+#endif // HASHMAP_H_
 
 #ifdef HASHMAP_IMPLEMENTATION
 
@@ -493,4 +498,4 @@ template<class K, class V, class H> void hashmap<K, V, H>::cat(hashmap<K, V, H> 
   }
 }
 
-#endif
+#endif // HASHMAP_IMPLEMENTATION

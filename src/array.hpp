@@ -1,3 +1,6 @@
+#ifndef ARRAY_H_
+#define ARRAY_H_
+
 #include <cstdlib>
 #include "common.hpp"
 #include <assert.h>
@@ -38,6 +41,8 @@ template<class T> struct array {
 };
 
 template<class T> static array<T> arrayinit(size_t capacity);
+
+#endif // ARRAY_H_
 
 #ifdef ARRAY_IMPLEMENTATION
 
@@ -249,4 +254,4 @@ template<class T> template<class F> void array<T>::filter(F&& pred) {
   resize(m_len);
 }
 
-#endif
+#endif // ARRAY_IMPLEMENTATION

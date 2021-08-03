@@ -1,3 +1,6 @@
+#ifndef MINHEAP_H_
+#define MINHEAP_H_
+
 #include <cstdlib>
 #include "common.hpp"
 
@@ -19,6 +22,8 @@ template<class T> struct minheap {
 
 template<class T> static minheap<T> minheapinit(size_t capacity);
 template<class T> static void minheapfree(minheap<T>* heap);
+
+#endif MINHEAP_H_
 
 #ifdef MINHEAP_IMPLEMENTATION
 
@@ -197,4 +202,4 @@ template<class T> T minheap<T>::delete_min() {
   return result;
 }
 
-#endif
+#endif // MINHEAP_IMPLEMENTATION

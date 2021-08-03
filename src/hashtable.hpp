@@ -1,3 +1,6 @@
+#ifndef HASHTABLE_H_
+#define HASHTABLE_H_
+
 #include <cstdlib>
 #include "common.hpp"
 
@@ -46,6 +49,8 @@ template<class T, class H> struct hashtable {
 
 template<class T, class H> static hashtable<T, H> hashtableinit(size_t capacity, H hash);
 template<class T, class H> static void hashtablefree(hashtable<T, H>* ht);
+
+#endif // HASHTABLE_H_
 
 #ifdef HASHTABLE_IMPLEMENTATION
 
@@ -477,4 +482,4 @@ template<class T, class H> void hashtable<T, H>::cat(hashtable<T, H> other) {
 
 }
 
-#endif
+#endif // HASHTABLE_IMPLEMENTATION
