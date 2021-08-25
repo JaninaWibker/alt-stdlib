@@ -7,6 +7,7 @@
 #include "tests/hashtable.cpp"
 #include "tests/hashmap.cpp"
 #include "tests/minheap.cpp"
+#include "tests/unionfind.cpp"
 
 int main() {
 
@@ -16,4 +17,5 @@ int main() {
   SUITE(hashtable_test());
   SUITE(hashmap_test());
   SUITE(minheap_test());
+  SUITE(unionfind_test());
 }
