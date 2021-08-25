@@ -37,4 +37,3 @@ int hashmap_test() {
 
   return 0;
 }
-

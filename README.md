@@ -195,7 +195,7 @@ Handles hash collisions.
 > **Warning**: Expensive action
 
 `template<class F> V hashmap<K, V, H>::fnd(F&& pred)`
-   
+
 
 **::has**: Check if the hashmap contains a value (by key)
 
@@ -221,7 +221,7 @@ Handles hash collisions.
 > **Warning**: Expensive action
 
 `void hashmap<K, V, H>::clr()`
-   
+
 
 **::filter**: Filter hashmap elements.
 
