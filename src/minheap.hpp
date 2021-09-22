@@ -23,7 +23,7 @@ template<class T> struct minheap {
 template<class T> static minheap<T> minheapinit(size_t capacity);
 template<class T> static void minheapfree(minheap<T>* heap);
 
-#endif MINHEAP_H_
+#endif // MINHEAP_H_
 
 #ifdef MINHEAP_IMPLEMENTATION
 

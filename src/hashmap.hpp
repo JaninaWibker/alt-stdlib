@@ -53,6 +53,14 @@ template<class K, class V, class H> static hashmap<K, V, H> hashmapinit(size_t c
 
 #ifdef HASHMAP_IMPLEMENTATION
 
+/**
+ * Create a new hashmap using an initial capacity and a given hash function
+ * Use as follows ([x] marks things to replace)
+ * ```c
+ * auto hash = []([your type] x) -> int { [your hash implementation] };
+ * auto hm = hashmapinit<[your type], decltype(hash)>([initial capacity], hash);
+ * ```
+ */
 template<class K, class V, class H> static hashmap<K, V, H> hashmapinit(size_t capacity, H hash) {
 
   // minimum capacity is 8 // TODO: should i change this to 16?
