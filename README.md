@@ -4,7 +4,7 @@
 
 This is intended to be a replacement for some of the standard library data structures as well as (maybe) other utilities (such as optionals).
 
-This project is heavily inspired by [stb](https://github.com/nothings/stb), [serenityOS](https://github.com/SerenityOS/serenity), my operating systems class and my algorithms class at university.
+This project is heavily inspired by [stb](https://github.com/nothings/stb), [serenityOS](https://github.com/SerenityOS/serenity), my operating systems and my algorithms class at university.
 
 Included data structures:
 - [unbounded array](#unbounded-array)
@@ -12,6 +12,15 @@ Included data structures:
 - [hashmap](#hashmap)
 - [minheap](#minheap)
 - [unionfind](#unionfind)
+
+## building and running tests
+
+Unit tests exist (for almost all data structures) and can be compiled using the `./build.sh`-file.
+This is only a minimal wrapper around G++ (or rather `$CXX`), nothing complicated is done there.
+
+> There will be a lot of warnings because the coding style is more c-like than normal c++, I'll maybe fix this in the future.
+
+The resulting `test` executable can be run and will print the output of the unit tests, the first failing test halts the program.
 
 ## components
 
