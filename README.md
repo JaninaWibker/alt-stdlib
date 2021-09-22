@@ -6,7 +6,12 @@ This is intended to be a replacement for some of the standard library data struc
 
 This project is heavily inspired by [stb](https://github.com/nothings/stb), [serenityOS](https://github.com/SerenityOS/serenity), my operating systems class and my algorithms class at university.
 
-There is a `common.hpp` file with some commonly used things but other than that everything is self-contained and can just be included as is.
+Included data structures:
+- [unbounded array](#unbounded-array)
+- [hashtable](#hashtable)
+- [hashmap](#hashmap)
+- [minheap](#minheap)
+- [unionfind](#unionfind)
 
 ## components
 
@@ -311,3 +316,50 @@ O(1)
 O(log n)
 
 `template<class T> T minheap<T>::delete_min()`
+
+
+
+### unionfind
+
+A union-find implementation using union-by-rank and path-compression.
+
+**unionfindinit**: Create a new unionfind data structure with a given size
+
+> **Warning**: The size cannot be changed later on.
+
+
+**unionfindfree**:: Free unionfind
+
+**::_union**: Join two partitions together
+
+Can be called using any element of a partition, doesn't need to be the root element / representative element of the partition.
+
+Returns wether or not the two partitions did get joined together (only 'fails' if they already are the same)
+
+`bool unionfind::_union(size_t a, size_t b)`
+
+
+**::find**: Find the partition (identified by a representative element) of the given element
+
+Time complexity: O(α(n)) amortized with α being the inverse Ackerman function (inverse of A(n, n)).
+This can effectively be ignored as it's value is below 5 for almost all practical values of n.
+
+`size_t unionfind::find(size_t a)`
+
+
+**::non_destructive_find**: Like find but does not mutate the data structure
+
+> **Warning**: only useful for testing, performance is bad.
+
+`size_t unionfind::non_destructive_find(size_t a)`
+
+
+**::dbg**: Print debug information about the state of the union find structure
+
+`void unionfind::dbg()`
+
+**::dbg**: Print debug information about the state of the union find structure
+
+Includes a name which will be displayed alongside the debug information to tell debug logs apart.
+
+`void unionfind::dbg(char* name)`

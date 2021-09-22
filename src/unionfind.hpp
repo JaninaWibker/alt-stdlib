@@ -38,7 +38,9 @@ void unionfindfree(unionfind* uf);
 #ifdef UNIONFIND_IMPLEMENTATION
 
 /**
- * TODO
+ * Create a new unionfind data structure with a given size
+ *
+ * Warning: The size cannot be changed later on
  */
 unionfind unionfindinit(size_t cnt) {
   size_t* parent = (size_t*)(malloc(sizeof(size_t) * cnt));
