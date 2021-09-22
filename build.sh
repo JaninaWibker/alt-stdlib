@@ -1,3 +1,3 @@
 #!/bin/sh
 
-g++ test.cpp -o test
+$CXX test.cpp -o test
